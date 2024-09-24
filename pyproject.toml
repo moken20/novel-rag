@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "rag-1"
+version = "0.1.0"
+description = ""
+authors = ["moken20 <ryota.kemmoku@keio.jp>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.10.1"
+faiss-cpu = "^1.8.0.post1"
+pandas = "^2.2.2"
+numpy = "1.26.4"
+mecab-python3 = "^1.0.9"
+rank-bm25 = "^0.2.2"
+unidic-lite = "^1.0.8"
+jupyter = "^1.1.1"
+tqdm = "^4.66.5"
+openai = "^1.46.1"
+ml-collections = "^0.1.1"
+langchain = "^0.3.0"
+langchain-community = "^0.3.0"
+tiktoken = "0.7.0"
+scikit-learn = "^1.5.2"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
