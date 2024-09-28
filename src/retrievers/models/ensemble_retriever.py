@@ -4,17 +4,15 @@ import numpy as np
 import pandas as pd
 from sklearn import preprocessing
 
-from src.retrievers.models.retriver_base import IndexesRetrieverBase
+from src.retrievers.models.retriver_base import Retriever
 
 logger = logging.getLogger(__name__)
 
 
-class EnsembleRetriever(IndexesRetrieverBase):
-    TARGET_COLUMN_NAME = 'text'
-    
+class EnsembleRetriever(Retriever):
     def __init__(
         self,
-        *retrievers: IndexesRetrieverBase,
+        *retrievers: Retriever,
     ) -> None:
         """Wrapper class for ensemble retriever.
 
@@ -23,8 +21,11 @@ class EnsembleRetriever(IndexesRetrieverBase):
         """
         if any(len(retriever.index_df) != len(retrievers[0].index_df) for retriever in retrievers):
             raise ValueError('Not all retriever have same index')
-        self.index_df = retrievers[0].index_df.reset_index(drop=True)
         self.retrievers = retrievers
+        super().__init__(
+            index_df=retrievers[0].index_df,
+            target_column_name=None,
+        )
 
     def _build_index(self) -> None:
         pass

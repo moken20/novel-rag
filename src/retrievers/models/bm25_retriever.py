@@ -6,7 +6,7 @@ import pandas as pd
 from rank_bm25 import BM25Okapi
 from tqdm import tqdm
 
-from src.retrievers.models.retriver_base import IndexesRetrieverBase
+from src.retrievers.models.retriver_base import Retriever
 from src.env import PACKAGE_DIR
 
 logger = logging.getLogger(__name__)
@@ -16,9 +16,8 @@ with open(PACKAGE_DIR/'src/retrievers/config/stopwords-ja.txt', 'r', encoding='u
     STOPWORDS = [line.strip() for line in f.readlines()]
 
 
-class KeywordRetriever(IndexesRetrieverBase):
+class KeywordRetriever(Retriever):
     TOKENIZED_COLUMN_NAME = 'tokenized_text'
-    TARGET_COLUMN_NAME = 'text'
 
     def __init__(
         self,
@@ -50,16 +49,12 @@ class KeywordRetriever(IndexesRetrieverBase):
         )
         self.filter_str_type = filter_str_type
         self.target_pos_list = target_pos_list
-        self.index = None
-        self.index_df = self._preprocess_index_df(index_df.reset_index(drop=True))
-
-        if target_column_name:
-            self.index_df[self.TARGET_COLUMN_NAME] = self.index_df[target_column_name]
-        elif self.TARGET_COLUMN_NAME not in self.index_df.columns:
-            raise ValueError(
-                f'Provide a target_column_name or include a column named {self.TARGET_COLUMN_NAME} in the index_df.'
-            )
-        self._build_index()
+        super().__init__(
+            index_df=index_df,
+            target_column_name=target_column_name,
+            target_pos_list=target_pos_list,
+            filter_str_type=filter_str_type,
+        )
 
 
     def _build_tokenizer(
@@ -91,7 +86,11 @@ class KeywordRetriever(IndexesRetrieverBase):
         self.mecab = MeCab.Tagger(f'-d {mecab_dic_path}' + mecab_other_option)
 
 
-    def _build_index(self) -> None:
+    def _build_index(
+            self,
+            target_pos_list: list[str] = ['名詞', '動詞'],
+            filter_str_type: str | None = None
+    ) -> None:
         """Build the index.
 
         Args:
@@ -106,7 +105,7 @@ class KeywordRetriever(IndexesRetrieverBase):
                 f'Generating kewwords by extract nouns and verbs from target column {self.TARGET_COLUMN_NAME}...'
             )
             self.index_df[self.TOKENIZED_COLUMN_NAME] = self.index_df[self.TARGET_COLUMN_NAME].progress_apply(
-                lambda x: self.tokenize(x, filter_str_type=self.filter_str_type, target_pos_list=self.target_pos_list)
+                lambda x: self.tokenize(x, filter_str_type=filter_str_type, target_pos_list=target_pos_list)
             )
 
         keywords = list(self.index_df[self.TOKENIZED_COLUMN_NAME].values)
