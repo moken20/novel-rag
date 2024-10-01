@@ -9,12 +9,11 @@ logger = logging.getLogger(__name__)
 
 
 class Retriever(metaclass=ABCMeta):
-    TARGET_COLUMN_NAME = 'text'
 
     def __init__(
         self,
         index_df: pd.DataFrame,
-        target_column_name: str | None = None,
+        target_column_name: str,
         **build_params,
     ) -> None:
         """Wrapper class for faiss index.
@@ -26,11 +25,10 @@ class Retriever(metaclass=ABCMeta):
             **build_params: Parameters for building the index.
         """
         self.index_df = index_df.reset_index(drop=True)
-        if target_column_name:
-            self.index_df[self.TARGET_COLUMN_NAME] = self.index_df[target_column_name]
-        elif self.TARGET_COLUMN_NAME not in self.index_df.columns:
+        self.target_column_name = target_column_name
+        if self.target_column_name not in self.index_df.columns:
             raise ValueError(
-                f'Provide a target_column_name or include a column named {self.TARGET_COLUMN_NAME} in the index_df.'
+                f'Provide a target_column_name or include a column named {self.target_column_name} in the index_df.'
             )
 
         self.index = None

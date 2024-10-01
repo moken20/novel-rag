@@ -1,6 +1,5 @@
 from typing import Any
 
-from pydantic_settings import BaseSettings
 import openai
 from openai import OpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
@@ -59,7 +58,6 @@ def call_chatgpt_api(
         presence_penalty=request_params.presence_penalty,
         max_tokens=request_params.max_tokens,
         messages=format_input_for_chatgpt(messages),
-        user=request_params.user or '',
         model=model.value,
         seed=request_params.seed,
     )

@@ -2,7 +2,7 @@ import re
 
 import pandas as pd
 
-from src.utils.preprocess.cleans import replace_symbols
+from src.index_builder.text_preprocess import replace_symbols
 
 class RetieverEvaluator:
     def __init__(self, evidences_texts: pd.Series, retrieved_texts_list: list[pd.Series]) -> None:

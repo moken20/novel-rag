@@ -17,12 +17,11 @@ with open(PACKAGE_DIR/'src/retrievers/config/stopwords-ja.txt', 'r', encoding='u
 
 
 class KeywordRetriever(Retriever):
-    TOKENIZED_COLUMN_NAME = 'tokenized_text'
-
     def __init__(
         self,
         index_df: pd.DataFrame,
-        target_column_name: str | None = None,
+        target_column_name: str = 'text',
+        tokenized_column_name: str = 'tokenized_text',
         mecab_dic_type: str | None = 'unidic_lite',
         mecab_dic_path: str | None = None,
         mecab_other_option: str = '',
@@ -49,6 +48,7 @@ class KeywordRetriever(Retriever):
         )
         self.filter_str_type = filter_str_type
         self.target_pos_list = target_pos_list
+        self.tokenized_column_name = tokenized_column_name
         super().__init__(
             index_df=index_df,
             target_column_name=target_column_name,
@@ -99,16 +99,16 @@ class KeywordRetriever(Retriever):
             filter_str_type (str | None, optional): The type of filtering to apply to the extracted keywords.
                 Possible values are [None, 'digit', 'numeric', 'ascii']. Defaults to None.
         """
-        if self.TOKENIZED_COLUMN_NAME not in self.index_df.columns:
+        if self.tokenized_column_name not in self.index_df.columns:
             logger.info(
-                f'Keywords column {self.TOKENIZED_COLUMN_NAME} not found.'
-                f'Generating kewwords by extract nouns and verbs from target column {self.TARGET_COLUMN_NAME}...'
+                f'Keywords column {self.tokenized_column_name} not found.'
+                f'Generating kewwords by extract nouns and verbs from target column {self.target_column_name}...'
             )
-            self.index_df[self.TOKENIZED_COLUMN_NAME] = self.index_df[self.TARGET_COLUMN_NAME].progress_apply(
+            self.index_df[self.tokenized_column_name] = self.index_df[self.target_column_name].progress_apply(
                 lambda x: self.tokenize(x, filter_str_type=filter_str_type, target_pos_list=target_pos_list)
             )
 
-        keywords = list(self.index_df[self.TOKENIZED_COLUMN_NAME].values)
+        keywords = list(self.index_df[self.tokenized_column_name].values)
         self.index = BM25Okapi(keywords)
 
 
@@ -121,8 +121,8 @@ class KeywordRetriever(Retriever):
         Returns:
             pd.DataFrame: processed DataFrame.
         """
-        if self.TOKENIZED_COLUMN_NAME in index_df.columns:
-            index_df[self.TOKENIZED_COLUMN_NAME] = index_df[self.TOKENIZED_COLUMN_NAME].map(eval)
+        if self.tokenized_column_name in index_df.columns:
+            index_df[self.tokenized_column_name] = index_df[self.tokenized_column_name].map(eval)
         return index_df
 
 
@@ -195,7 +195,7 @@ class KeywordRetriever(Retriever):
         top_k_indices = np.argsort(similarities)[::-1][:top_k]
         result_df = self.index_df.iloc[top_k_indices].reset_index()
 
-        result_df['similar_document'] = result_df[self.TARGET_COLUMN_NAME]
+        result_df['similar_document'] = result_df[self.target_column_name]
         result_df['similarity'] = [similarities[i] for i in top_k_indices]
         require_columns = ['similar_document', 'similarity'] + (require_columns or [])
 

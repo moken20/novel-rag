@@ -51,7 +51,6 @@ class NovelSplitter:
 
 class CharTextSplitter(NovelSplitter):
     def __init__(self, novels_dir: PosixPath, chunksize: int, overlap: float, from_tiktoken: bool = False):
-        self.output_data_path = PACKAGE_DIR.joinpath(f'data/database/chartext_sp/df_{chunksize}_{overlap*100}.csv')
         super().__init__(
             novels_dir=novels_dir,
             chunksize=chunksize,
@@ -75,7 +74,6 @@ class CharTextSplitter(NovelSplitter):
 
 class RecurCharTextSplitter(NovelSplitter):
     def __init__(self, novels_dir: PosixPath, chunksize: int, overlap: float):
-        self.output_data_path = PACKAGE_DIR.joinpath(f'data/database/recurchartext_sp/df_{chunksize}_{overlap*100}.csv')
         super().__init__(
             novels_dir=novels_dir,
             chunksize=chunksize,

@@ -1,12 +1,13 @@
 import os
 import glob
 from pathlib import Path
+from fire import Fire
 
 import pandas as pd
 
 from src.env import PACKAGE_DIR
 from src.utils.file_io import extract_id_from_filename
-from src.utils.preprocess.cleans import replace_symbols, remove_header, remove_footer
+from index_builder.text_preprocess import replace_symbols, remove_header, remove_footer
 
 def preprocess_novel(text: str) -> str:
     text = remove_header(text)
@@ -14,12 +15,12 @@ def preprocess_novel(text: str) -> str:
     text = remove_footer(text)
     return text
 
-def run(cfg):
-    if cfg.mode == 'valid':
+def run(mode):
+    if mode == 'valid':
         raw_novel_dir = PACKAGE_DIR.joinpath('data/raw/valid_sets/novels')
         processed_novel_dir = PACKAGE_DIR.joinpath('data/processed/valide_sets/novels')
         encoding = 'utf-8'
-    elif cfg.mode == 'test':
+    elif mode == 'test':
         raw_novel_dir = PACKAGE_DIR.joinpath('data/raw/test_sets/novels')
         processed_novel_dir = PACKAGE_DIR.joinpath('data/processed/test_sets/novels')
         encoding = 'shift-jis'
@@ -44,3 +45,6 @@ def run(cfg):
     meta_data = pd.DataFrame(novel_meta_data)
     meta_data.to_csv(processed_novel_dir.parent.joinpath('metadata.csv'), index=None)
 
+
+if __name__ == '__main__':
+    Fire(run)

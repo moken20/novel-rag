@@ -24,7 +24,7 @@ class EnsembleRetriever(Retriever):
         self.retrievers = retrievers
         super().__init__(
             index_df=retrievers[0].index_df,
-            target_column_name=None,
+            target_column_name=retrievers[0].target_column_name,
         )
 
     def _build_index(self) -> None:
@@ -87,7 +87,7 @@ class EnsembleRetriever(Retriever):
         top_k_indices = np.argsort(ensembled_scores)[::-1][:top_k]
         result_df = self.index_df.iloc[top_k_indices].reset_index()
 
-        result_df['similar_document'] = result_df[self.TARGET_COLUMN_NAME]
+        result_df['similar_document'] = result_df[self.target_column_name]
         result_df['similarity'] = [ensembled_scores[i] for i in top_k_indices]
         require_columns = ['similar_document', 'similarity'] + (require_columns or [])
 
