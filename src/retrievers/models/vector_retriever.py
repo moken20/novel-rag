@@ -60,7 +60,7 @@ class VectorRetriever(Retriever):
         self,
         query: str,
         top_k: int = 5,
-        require_columns: list[str] | None = None,
+        require_columns: list[str] | None = ['chunk_id'],
     ) -> pd.DataFrame:
         query_emb = get_embedding(query, model=self.model)
         distances, indices = self.index.search(np.array([query_emb]).astype('float32'), top_k)

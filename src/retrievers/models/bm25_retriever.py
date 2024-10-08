@@ -11,7 +11,6 @@ from src.env import PACKAGE_DIR
 
 logger = logging.getLogger(__name__)
 
-tqdm.pandas()
 with open(PACKAGE_DIR/'src/retrievers/config/stopwords-ja.txt', 'r', encoding='utf-8') as f:
     STOPWORDS = [line.strip() for line in f.readlines()]
 
@@ -104,7 +103,7 @@ class KeywordRetriever(Retriever):
                 f'Keywords column {self.tokenized_column_name} not found.'
                 f'Generating kewwords by extract nouns and verbs from target column {self.target_column_name}...'
             )
-            self.index_df[self.tokenized_column_name] = self.index_df[self.target_column_name].progress_apply(
+            self.index_df[self.tokenized_column_name] = self.index_df[self.target_column_name].apply(
                 lambda x: self.tokenize(x, filter_str_type=filter_str_type, target_pos_list=target_pos_list)
             )
 
@@ -178,7 +177,7 @@ class KeywordRetriever(Retriever):
         self,
         query: str,
         top_k: int = 5,
-        require_columns: list[str] | None = None,
+        require_columns: list[str] | None = ['chunk_id'],
     ) -> pd.DataFrame:
         """Search the index for the query.
 

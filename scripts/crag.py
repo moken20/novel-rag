@@ -1,18 +1,19 @@
 import argparse
 import os
-from evaluator.eval_generator.settings import FormatSetter
-from evaluator.eval_generator.validator import DataFrameValidator
-from evaluator.eval_generator.dbmanager import DBLoader, ResultHandler
-from evaluator.eval_generator.evaluator import CRAGEvaluator
+from src.evaluator.eval_generator.settings import FormatSetter
+from src.evaluator.eval_generator.validator import DataFrameValidator
+from src.evaluator.eval_generator.dbmanager import DBLoader, ResultHandler
+from src.evaluator.eval_generator.evaluator import CRAGEvaluator
+from src.env import PACKAGE_DIR
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model-name', default = 'gpt-4o-2024-08-06')
-    parser.add_argument('--result-dir', default = './data/evaluation/pred')
+    parser.add_argument('--result-dir', default = PACKAGE_DIR/'data/results/test_pred')
     parser.add_argument('--result-name', default = 'predictions.csv')
     parser.add_argument('--max-num-tokens', default=50, type=int)
-    parser.add_argument('--ans-dir', default = './data/evaluation/ans')
+    parser.add_argument('--ans-dir', default = PACKAGE_DIR/'data/raw/test_sets')
     parser.add_argument('--ans-txt', default = 'ans_txt.csv')
     parser.add_argument('--eval-result-dir', default = './result')
     args = parser.parse_args()

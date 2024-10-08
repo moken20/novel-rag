@@ -37,7 +37,7 @@ class EnsembleRetriever(Retriever):
         ensemble_method: str = 'rrf',
         rank_impact_mitigator: int | None = 60,
         top_k: int = 5,
-        require_columns: list[str] | None = None,
+        require_columns: list[str] | None =['chunk_id'],
     ) -> pd.DataFrame:
         """Execute a search across multiple retrievers and fuse these rank.
 

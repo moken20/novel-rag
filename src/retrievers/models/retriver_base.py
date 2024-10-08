@@ -50,7 +50,6 @@ class Retriever(metaclass=ABCMeta):
         index_df = pd.read_csv(index_df_path)
         return cls(index_df=index_df, **kwargs)
 
-    @abstractmethod
     def _build_index(self, **build_params) -> None:
         """Build the index."""
         pass

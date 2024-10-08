@@ -28,8 +28,9 @@ class IndexAugmentator:
         messages = prepare_input_messages(prompt=self.openai_params.messages, num_expands=num_expands, text=chunk_text)
 
         augmented_text = call_chatgpt_api(messages=messages, model=self.openai_params.model, request_params=self.openai_params)
-        indexes = augmented_text.strip().split(',')
-        return indexes
+        comma_splited_text = augmented_text.strip().split(',')
+        ten_splited_text = augmented_text.strip().split('、')
+        return comma_splited_text if len(comma_splited_text) >= len(ten_splited_text) else ten_splited_text
 
 
     def augment_index(self, num_expands: int = 10) -> pd.DataFrame:
